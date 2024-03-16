@@ -14,10 +14,7 @@ import java.util.Set;
 
 public class Main {
     public static void main(String[] args) {
-//        String fileData = "home/test/airports.csv";
-//        String inputFile = "temp/input1.txt";
-//        String outputFile = "temp/result1.json";
-//        int columnId = 2;
+        long startTime = System.currentTimeMillis();
 
         String fileData = "";
         String inputFile = "";
@@ -45,29 +42,26 @@ public class Main {
         outputFile = outputFile.substring(1);
 
         JsonAnswer jsonAnswer = new JsonAnswer();
-        long startTime = System.nanoTime();
 
         FileService fileService = new FileServiceImpl();
         List<String> queries = fileService.readQueries(inputFile);
 
-        long endTime = System.nanoTime();
-
-        jsonAnswer.setInitTime((endTime - startTime));
-
         BinaryTreeService btsService = new BinaryTreeServiceImpl();
         BinarySearchTree bst = btsService.create(fileData, columnId);
 
+        long endTime = System.currentTimeMillis();
+        jsonAnswer.setInitTime(endTime - startTime);
         for (String query : queries) {
             ResultDto resultDto = new ResultDto();
             int numRow;
 
             Set<Integer> visitedRows = new HashSet<>();
 
-            startTime = System.nanoTime();
+            startTime = System.currentTimeMillis();
             while ((numRow = bst.findRowNum(query, visitedRows)) != -1) {
                 resultDto.getResultIds().add(numRow + 1);
             }
-            endTime = System.nanoTime();
+            endTime = System.currentTimeMillis();
 
             resultDto.setTime(endTime - startTime);
             resultDto.setSearch(query);
