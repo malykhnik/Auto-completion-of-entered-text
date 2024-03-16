@@ -11,6 +11,7 @@ import org.malykhnik.service.impl.FileServiceImpl;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) {
@@ -50,20 +51,18 @@ public class Main {
         BinarySearchTree bst = btsService.create(fileData, columnId);
 
         long endTime = System.currentTimeMillis();
-        jsonAnswer.setInitTime(endTime - startTime);
+        long finalTime = endTime - startTime;
+        jsonAnswer.setInitTime(finalTime);
         for (String query : queries) {
             ResultDto resultDto = new ResultDto();
-            int numRow;
 
-            Set<Integer> visitedRows = new HashSet<>();
+            startTime = System.nanoTime();
+            List<Integer> rows = bst.findRowNum(query);
+            resultDto.setResultIds(rows);
+            endTime = System.nanoTime();
 
-            startTime = System.currentTimeMillis();
-            while ((numRow = bst.findRowNum(query, visitedRows)) != -1) {
-                resultDto.getResultIds().add(numRow + 1);
-            }
-            endTime = System.currentTimeMillis();
-
-            resultDto.setTime(endTime - startTime);
+            finalTime = endTime - startTime;
+            resultDto.setTime(Math.round((float) finalTime /1_000_000));
             resultDto.setSearch(query);
 
             jsonAnswer.getResult().add(resultDto);

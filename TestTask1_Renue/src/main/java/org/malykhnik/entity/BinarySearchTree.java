@@ -1,9 +1,11 @@
 package org.malykhnik.entity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class BinarySearchTree {
-    Node root;
+    private Node root;
 
     public void insert(String value, int rowNum) {
         root = insertRec(root, value, rowNum);
@@ -21,19 +23,16 @@ public class BinarySearchTree {
         return root;
     }
 
-    public int findRowNum(String value, Set<Integer> visited) {
-        return findRowNumRec(root, value, visited);
+    public List<Integer> findRowNum(String value) {
+        List<Integer> rows = new ArrayList<>();
+        findRowNumRec(root, value, rows);
+        return rows;
     }
 
-    private int findRowNumRec(Node root, String value, Set<Integer> visited) {
-        if (root == null || (root.value.startsWith(value) && !visited.contains(root.rowNum)))
-            if (root != null) {
-                visited.add(root.rowNum);
-                return root.rowNum;
-            }
-            else return  -1;
-        if (value.compareTo(root.value) < 0)
-            return findRowNumRec(root.left, value, visited);
-        return findRowNumRec(root.right, value, visited);
+    private void findRowNumRec(Node root, String value, List<Integer> rows) {
+        if (root == null) return;
+        if (root.value.startsWith(value)) rows.add(root.rowNum);
+        if (value.compareTo(root.value) < 0) findRowNumRec(root.left, value, rows);
+        findRowNumRec(root.right, value, rows);
     }
 }
